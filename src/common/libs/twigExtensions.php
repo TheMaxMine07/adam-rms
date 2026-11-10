@@ -224,6 +224,17 @@ $TWIG->addFunction(new \Twig\TwigFunction('moneySymbol', function ($currency = f
 $TWIG->addFilter(new \Twig\TwigFilter('mass', function ($variable) {
     return number_format((float)$variable, 2, '.', '') . "kg";
 }));
+function formatPowerW($variable): string
+{
+    if ($variable === null || $variable === '') return '?';
+    $watts = (float)$variable;
+    if (!is_finite($watts) || $watts < 0) return '?';
+    $isKilowatts = $watts >= 1000;
+    $value = number_format($isKilowatts ? $watts / 1000 : $watts, 2, ',', '.');
+    $value = rtrim(rtrim($value, '0'), ',');
+    return $value . ($isKilowatts ? ' kW' : ' W');
+}
+$TWIG->addFilter(new \Twig\TwigFilter('power', 'formatPowerW'));
 $TWIG->addFilter(new \Twig\TwigFilter('nbsp', function ($string) {
     return str_replace(" ","&nbsp;", $string);
 }, [

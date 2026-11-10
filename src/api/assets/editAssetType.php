@@ -18,6 +18,10 @@ $moneyParser = new DecimalMoneyParser($currencies);
 $array['assetTypes_value'] = $moneyParser->parse(($array['assetTypes_value'] ?? "0.00"), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 $array['assetTypes_dayRate'] = $moneyParser->parse(($array['assetTypes_dayRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 $array['assetTypes_weekRate'] = $moneyParser->parse(($array['assetTypes_weekRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
+if (array_key_exists('assetTypes_powerConsumptionW', $array) && $array['assetTypes_powerConsumptionW'] !== null) {
+    if (!is_numeric($array['assetTypes_powerConsumptionW']) || (float)$array['assetTypes_powerConsumptionW'] < 0) finish(false, ["code" => "PARAM-ERROR", "message" => "Power consumption must be a non-negative number of watts"]);
+    $array['assetTypes_powerConsumptionW'] = round((float)$array['assetTypes_powerConsumptionW'], 3);
+}
 
 if (!$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) {
     $DBLIB->where("(instances_id IS NOT NULL)");
@@ -40,7 +44,7 @@ if (isset($array['assetCategories_id'])) { //Shared categories, or the type's bu
 }
 
 $DBLIB->where("assetTypes_id",$array['assetTypes_id']);
-$result = $DBLIB->update("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','assetTypes_productLink','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
+$result = $DBLIB->update("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','assetTypes_productLink','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_powerConsumptionW','assetTypes_inserted',"assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update asset type"]);
 else {
     $bCMS->auditLog("EDIT-ASSET-TYPE", "assetTypes", json_encode($array), $AUTH->data['users_userid'],null, $array['assetTypes_id']);

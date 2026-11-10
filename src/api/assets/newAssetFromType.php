@@ -4,9 +4,14 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if (!$AUTH->instancePermissionCheck("ASSETS:CREATE")) die("Sorry - you can't access this page");
 $array = [];
 foreach ($_POST['formData'] as $item) {
+    if ($item['value'] == '') $item['value'] = null;
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['assetTypes_id']) < 1) finish(false, ["code" => "PARAM-ERROR", "message" => "No data for action"]);
+if (isset($array['assets_powerConsumptionW']) && $array['assets_powerConsumptionW'] !== null) {
+    if (!is_numeric($array['assets_powerConsumptionW']) || (float)$array['assets_powerConsumptionW'] < 0) finish(false, ["code" => "PARAM-ERROR", "message" => "Power consumption must be a non-negative number of watts"]);
+    $array['assets_powerConsumptionW'] = round((float)$array['assets_powerConsumptionW'], 3);
+}
 
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 $array['assets_inserted'] = date('Y-m-d H:i:s');
@@ -24,7 +29,7 @@ if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
     if ($duplicateAssetTag > 0) finish(false, ["code" => "INSERT-FAIL", "message" => "Sorry that tag you chose was a duplicate - please choose another one"]);
 } else $array['assets_tag'] = generateNewTag();
 
-$result = $DBLIB->insert("assets", array_intersect_key($array, array_flip(['assets_tag', 'assetTypes_id', 'assets_notes', 'instances_id', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_assetGroups'])));
+$result = $DBLIB->insert("assets", array_intersect_key($array, array_flip(['assets_tag', 'assetTypes_id', 'assets_notes', 'instances_id', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_assetGroups', 'assets_powerConsumptionW'])));
 
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message" => "Could not insert asset"]);
 

@@ -24,6 +24,10 @@ $moneyParser = new DecimalMoneyParser($currencies);
 $array['assets_value'] = ($array['assets_value'] == null ? null : $moneyParser->parse($array['assets_value'], $AUTH->data['instance']['instances_config_currency'])->getAmount());
 $array['assets_dayRate'] = ($array['assets_dayRate'] == null ? null : $moneyParser->parse($array['assets_dayRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount());
 $array['assets_weekRate'] = ($array['assets_weekRate'] == null ? null : $moneyParser->parse($array['assets_weekRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount());
+if (array_key_exists('assets_powerConsumptionW', $array) && $array['assets_powerConsumptionW'] !== null) {
+    if (!is_numeric($array['assets_powerConsumptionW']) || (float)$array['assets_powerConsumptionW'] < 0) finish(false, ["code" => "PARAM-ERROR", "message" => "Power consumption must be a non-negative number of watts"]);
+    $array['assets_powerConsumptionW'] = round((float)$array['assets_powerConsumptionW'], 3);
+}
 
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);
@@ -51,7 +55,7 @@ if (isset($array['assets_tag']) and $array['assets_tag'] != $asset['assets_tag']
 
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);
-$result = $DBLIB->update("assets", array_intersect_key($array, array_flip(['assets_linkedTo', 'assetTypes_id', 'assets_notes', 'assets_tag', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_value', 'assets_dayRate', 'assets_weekRate', 'assets_mass', 'assets_storageLocation'])));
+$result = $DBLIB->update("assets", array_intersect_key($array, array_flip(['assets_linkedTo', 'assetTypes_id', 'assets_notes', 'assets_tag', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_value', 'assets_dayRate', 'assets_weekRate', 'assets_mass', 'assets_powerConsumptionW', 'assets_storageLocation'])));
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update asset"]);
 else {
     $DBLIB->where("assets_id",$array['assets_id']);

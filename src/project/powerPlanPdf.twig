@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js" integrity="sha512-7BzHjLXs8xehClrkJEtJtAwXxcbLast87k+XekuItHxrMr/v6POWkoKS2/8CU6DHdIjY+A4NwvsBQ8PxoRH7xQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/vfs_fonts.min.js" integrity="sha512-P0bOMePRS378NwmPDVPU455C/TuxDS+8QwJozdc7PGgN8kLqR4ems0U/3DeJkmiE31749vYWHvBOtR+37qDCZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+<script>
+    const docDefinition = {
+        content: [
+            { text: "{{ USERDATA.instance.instances_name|escape("js") }}", style: "business" },
+            { text: "Power Plan", style: "title" },
+            { text: "{{ project.projects_name|escape("js") }}", style: "project" },
+            {% if project.projects_dates_deliver_start %}{ text: "Delivery: {{ project.projects_dates_deliver_start|date("j M Y h:ia")|escape("js") }}", margin: [0, 0, 0, 12] },{% endif %}
+            { text: "Connected equipment", style: "heading" },
+            {
+                table: {
+                    headerRows: 1,
+                    widths: ["*", "auto", "auto"],
+                    body: [
+                        ["Equipment", "Asset tag", "Power"],
+                        {% for item in FINANCIALS.powerPlanAssets %}
+                            ["{{ item.name|escape("js") }}", "{{ item.tag|aTag|escape("js") }}", "{{ item.formattedPower|escape("js") }}"],
+                        {% else %}
+                            [{ text: "No assigned items have a positive power value.", colSpan: 3, italics: true }, {}, {}],
+                        {% endfor %}
+                        [{ text: "Total known power", colSpan: 2, bold: true }, {}, { text: "{{ FINANCIALS.formattedPower|escape("js") }}", bold: true }],
+                    ]
+                },
+                layout: "lightHorizontalLines",
+                margin: [0, 0, 0, 18]
+            },
+            { text: "Three-phase supply estimate", style: "heading" },
+            {% if FINANCIALS.recommendedPowerConnector %}
+                { text: "Recommended connection: {{ FINANCIALS.recommendedPowerConnector.label|escape("js") }}", style: "recommendation" },
+                { text: "Calculated load: {{ FINANCIALS.recommendedPowerConnector.currentA|number_format(2, ",", ".") }} A per phase", margin: [0, 4, 0, 4] },
+                {% if FINANCIALS.recommendedPowerConnector.amps is null %}
+                    { text: "The calculated load exceeds the modeled CEE 125 A rating. Split the load across supplies and review the distribution plan.", color: "#b00020", margin: [0, 4, 0, 4] },
+                {% endif %}
+            {% else %}
+                { text: "No power value is available for the assigned equipment.", italics: true, margin: [0, 0, 0, 8] },
+            {% endif %}
+            { text: "Calculation uses total watts ÷ (3 × 230 V), assuming an even load across all three phases. Standard CEE ratings used: 16 A, 32 A, 63 A and 125 A.", fontSize: 9, color: "#555555", margin: [0, 4, 0, 8] },
+            {% if FINANCIALS.powerWithoutValueCount > 0 %}
+                { text: "{{ FINANCIALS.powerWithoutValueCount }} assigned item(s) have no power value and are excluded from this total and recommendation.", color: "#9a6700", margin: [0, 4, 0, 4] },
+            {% endif %}
+            { text: "This estimate does not account for unequal phase loading or equipment power factor.", fontSize: 9, color: "#555555" }
+        ],
+        styles: {
+            business: { fontSize: 11, color: "#555555", margin: [0, 0, 0, 14] },
+            title: { fontSize: 24, bold: true, margin: [0, 0, 0, 4] },
+            project: { fontSize: 15, margin: [0, 0, 0, 18] },
+            heading: { fontSize: 16, bold: true, margin: [0, 8, 0, 8] },
+            recommendation: { fontSize: 14, bold: true, color: "#1565c0" }
+        },
+        pageSize: "A4",
+        pageMargins: [40, 45, 40, 45],
+        info: {
+            title: "{{ project.projects_name|escape("js") }} - Power Plan",
+            author: "{{ USERDATA.instance.instances_name|escape("js") }}",
+            subject: "Power Plan"
+        }
+    };
+
+    try {
+        const pdf = pdfMake.createPdf(docDefinition);
+        {% if GET['draft'] or CONFIG.FILES_ENABLED != "Enabled" or USERDATA.instance.instances_storageEnabled != 1 %}
+            pdf.download("{{ project.projects_name|escape("js") }} - Draft Power Plan.pdf", function () { setTimeout(() => window.close(), 100); });
+        {% else %}
+            pdf.getBlob((blob) => {
+                const formData = new FormData();
+                formData.append("file", blob, "power-plan.pdf");
+                formData.append("type", "powerPlan");
+                formData.append("fileNumber", "{{ fileNumber|escape("js") }}");
+                formData.append("id", "{{ project.projects_id }}");
+                const request = new XMLHttpRequest();
+                request.open("POST", "{{ CONFIG.ROOTURL }}/api/s3files/uploadProjectInvoice.php", true);
+                request.onload = function () {
+                    const response = JSON.parse(request.responseText);
+                    if (response.result && response.response && response.response.url) {
+                        pdf.download("{{ project.projects_name|escape("js") }} - Power Plan v{{ fileNumber|escape("js") }}.pdf", function () { setTimeout(() => window.close(), 100); });
+                    } else {
+                        alert(response.error && response.error.message ? response.error.message : "Could not save the power plan.");
+                    }
+                };
+                request.onerror = function () { alert("Could not create the power plan."); };
+                request.send(formData);
+            });
+        {% endif %}
+    } catch (error) {
+        alert(error.message);
+    }
+</script>
+</body>
+</html>

@@ -87,6 +87,9 @@
                                         {% if GET['totalmass'] and project.projectsTypes_config_assets == 1 %}
                                             ['Mass Estimate:',"{{FINANCIALS.mass|mass|escape("js") }}"],
                                         {% endif %}
+                                        {% if GET['totalpower'] and project.projectsTypes_config_assets == 1 %}
+                                            ['Power Estimate:',"{{ FINANCIALS.formattedPower|escape("js") }}"],
+                                        {% endif %}
                                         {% if GET['totalvalue'] and project.projectsTypes_config_assets == 1 %}
                                             ['Value Estimate:',"{{FINANCIALS.value|money|escape("js") }}"],
                                         {% endif %}
@@ -175,6 +178,7 @@
                     {% if GET['checkboxes'] %}{% set columnCount = columnCount + 1 %}{% endif %}
                     {% if GET['comments'] %}{% set columnCount = columnCount + 1 %}{% endif %}
                     {% if GET['masses'] %}{% set columnCount = columnCount + 1 %}{% endif %}
+                    {% if GET['powers'] %}{% set columnCount = columnCount + 1 %}{% endif %}
                     {% if project.projectsTypes_config_finance == 1 %}
                         {% if GET['prices'] %}{% set columnCount = columnCount + 1 %}{% endif %}
                         {% if GET['discounts'] %}{% set columnCount = columnCount + 1 %}{% endif %}
@@ -190,6 +194,7 @@
                                     {% if GET['comments'] %}'auto',{% endif %}
                                     'auto',
                                     {% if GET['masses'] %}'auto',{% endif %}
+                                    {% if GET['powers'] %}'auto',{% endif %}
                                     {% if project.projectsTypes_config_finance == 1 %}
                                         {% if GET['prices'] %}'auto',{% endif %}
                                         {% if GET['discounts'] %}'auto',{% endif %}
@@ -202,6 +207,7 @@
                                         {% if GET['comments'] %}' ',{% endif %}
                                         '{# Definable Fields #} ',
                                         {% if GET['masses'] %}'Mass',{% endif %}
+                                        {% if GET['powers'] %}'Power',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
                                             {% if GET['prices'] %}'Price {{ moneySymbol() }}',{% endif %}
                                             {% if GET['discounts'] %}'Disc {{ moneySymbol() }}',{% endif %}
@@ -241,6 +247,7 @@
                                     {% if GET['comments'] %}'auto',{% endif %}
                                     'auto',
                                     {% if GET['masses'] %}'auto',{% endif %}
+                                    {% if GET['powers'] %}'auto',{% endif %}
                                     {% if project.projectsTypes_config_finance == 1 %}
                                         {% if GET['prices'] %}'auto',{% endif %}
                                         {% if GET['discounts'] %}'auto',{% endif %}
@@ -253,6 +260,7 @@
                                         {% if GET['comments'] %}' ',{% endif %}
                                         '{# Definable Fields #} ',
                                         {% if GET['masses'] %}'Mass',{% endif %}
+                                        {% if GET['powers'] %}'Power',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
                                             {% if GET['prices'] %}'Price {{ moneySymbol() }}',{% endif %}
                                             {% if GET['discounts'] %}'Disc {{ moneySymbol() }}',{% endif %}

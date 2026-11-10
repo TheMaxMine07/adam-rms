@@ -10,6 +10,9 @@
     {% if GET['masses'] %}
         '{{ (type['totals']['mass'] > 0 ? type['totals']['mass']|escape("js") ~ 'kg' : '') }}',
     {% endif %}
+    {% if GET['powers'] %}
+        '{{ (type['totals']['powerW'] > 0 ? type['totals']['powerW']|power|escape("js") : '') }}',
+    {% endif %}
     {% if project.projectsTypes_config_finance == 1 %}
         {% if GET['prices'] %}
             '{{ type['totals']['price']|money|escape("js") }}',
@@ -49,6 +52,9 @@
         {% endif %}
         {% if GET['masses'] %}
             '{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}',
+        {% endif %}
+        {% if GET['powers'] %}
+            '{{ assetAssignment.powerConsumptionW is not null and assetAssignment.powerConsumptionW > 0 ? assetAssignment.powerConsumptionW|power|escape("js") : "" }}',
         {% endif %}
         {% if project.projectsTypes_config_finance == 1 %}
             {% if GET['prices'] %}'{{ assetAssignment.price|money|escape("js") }}',{% endif %}

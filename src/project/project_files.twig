@@ -196,5 +196,28 @@
 				</div>
 			</div>
 		</div>
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">Power Plans</h3>
+			</div>
+			<div class="card-body p-0">
+				<ul class="todo-list">
+					{% for file in powerPlans %}
+						<li>
+							<span class="handle"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
+							<span class="text">{{ file.s3files_name }} - {{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
+							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
+							<div class="tools"><a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a></div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="card-footer">
+				<div class="btn-group float-right">
+					<a class="btn btn-default" target="_blank" href="{{ CONFIG.ROOTURL }}/project/projectInvoice.php?type=powerPlan&amp;id={{ project.projects_id }}">Create Power Plan</a>
+				</div>
+			</div>
+		</div>
+		</div>
 	</div>
 </div>

@@ -38,6 +38,28 @@ $PAGEDATA['project']['subProjects'] = $DBLIB->get("projects", null, ["projects.*
 //Finances
 
 //Payments and also
+function projectPowerConnectorRecommendation($watts) {
+    $watts = max(0, (float)$watts);
+    if ($watts <= 0) return null;
+    $amps = $watts / (3 * 230);
+    foreach ([16, 32, 63, 125] as $rating) {
+        if ($amps <= $rating) {
+            return [
+                'amps' => $rating,
+                'currentA' => $amps,
+                'capacityW' => $rating * 3 * 230,
+                'label' => 'CEE ' . $rating . ' A',
+            ];
+        }
+    }
+    return [
+        'amps' => null,
+        'currentA' => $amps,
+        'capacityW' => 125 * 3 * 230,
+        'label' => 'Über 125 A je Phase',
+    ];
+}
+
 function projectFinancials($project) {
     global $DBLIB,$AUTH,$bCMS;
     $projectFinanceHelper = new projectFinance();
@@ -96,12 +118,31 @@ function projectFinancials($project) {
     $return['assetsAssigned'] = [];
     $return['assetsAssignedSUB'] = [];
     $return['mass'] = 0.0; //TODO evaluate whether using floats for mass is a good idea....
+    $return['powerW'] = 0.0;
+    $return['powerWithoutValueCount'] = 0;
+    $return['powerPlanAssets'] = [];
     $return['value'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
     $return['prices'] = ["subTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "discounts" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))];
 
     $return['priceMaths'] = $projectFinanceHelper->durationMaths($project['projects_id']);
     foreach ($assets as $asset) {
         $return['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
+        $asset['powerConsumptionW'] = $asset['assets_powerConsumptionW'] !== null ? $asset['assets_powerConsumptionW'] : $asset['assetTypes_powerConsumptionW'];
+        if ($asset['powerConsumptionW'] === null) {
+            $return['powerWithoutValueCount']++;
+        } else {
+            $assetPowerW = max(0, (float)$asset['powerConsumptionW']);
+            $return['powerW'] += $assetPowerW;
+            if ($assetPowerW > 0) {
+                $asset['formattedPower'] = formatPowerW($assetPowerW);
+                $return['powerPlanAssets'][] = [
+                    'name' => trim(($asset['manufacturers_name'] && $asset['manufacturers_id'] != 1 ? $asset['manufacturers_name'] . ' - ' : '') . $asset['assetTypes_name']),
+                    'tag' => $asset['assets_tag'],
+                    'powerW' => $assetPowerW,
+                    'formattedPower' => $asset['formattedPower'],
+                ];
+            }
+        }
         $asset['value'] = new Money(($asset['assets_value'] != null ? $asset['assets_value'] : $asset['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency']));
         $return['value'] = $return['value']->add($asset['value']);
 
@@ -142,18 +183,20 @@ function projectFinancials($project) {
         }
     }
     foreach ($return['assetsAssigned'] as $key => $type) {
-        if (!isset($return['assetsAssigned'][$key]['totals'])) $return['assetsAssigned'][$key]['totals'] = ["status" => null,"discountPrice"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"price"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"mass"=>0.0];
+            if (!isset($return['assetsAssigned'][$key]['totals'])) $return['assetsAssigned'][$key]['totals'] = ["status" => null,"discountPrice"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"price"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"mass"=>0.0,"powerW"=>0.0];
         foreach ($type['assets'] as $asset) {
             if ($return['assetsAssigned'][$key]['totals']['status'] == null) $return['assetsAssigned'][$key]['totals']['status'] = $asset['assetsAssignmentsStatus_name'];
             elseif ($return['assetsAssigned'][$key]['totals']['status'] != $asset['assetsAssignmentsStatus_name']) $return['assetsAssigned'][$key]['totals']['status'] = false; //They aren't all the same
             $return['assetsAssigned'][$key]['totals']['discountPrice'] = $return['assetsAssigned'][$key]['totals']['discountPrice']->add($asset['discountPrice']);
             $return['assetsAssigned'][$key]['totals']['price'] = $return['assetsAssigned'][$key]['totals']['price']->add($asset['price']);
             $return['assetsAssigned'][$key]['totals']['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
+            $return['assetsAssigned'][$key]['totals']['powerW'] += ($asset['powerConsumptionW'] === null ? 0 : max(0, (float)$asset['powerConsumptionW']));
         }
         //formatted Totals
         $return['assetsAssigned'][$key]['totals']['formattedDiscountPrice'] = $moneyFormatter->format($return['assetsAssigned'][$key]['totals']['discountPrice']);
         $return['assetsAssigned'][$key]['totals']['formattedPrice'] = $moneyFormatter->format($return['assetsAssigned'][$key]['totals']['price']);
         $return['assetsAssigned'][$key]['totals']['formattedMass'] = number_format($return['assetsAssigned'][$key]['totals']['mass'], 2, '.', '') . "kg";
+        $return['assetsAssigned'][$key]['totals']['formattedPower'] = formatPowerW($return['assetsAssigned'][$key]['totals']['powerW']);
     }
     foreach ($return['assetsAssignedSUB'] as $instanceid => $instance) {
         if (!isset($return['assetsAssignedSUB'][$instanceid]['instance'])) {
@@ -161,18 +204,20 @@ function projectFinancials($project) {
             $return['assetsAssignedSUB'][$instanceid]['instance'] = $DBLIB->getone("instances",["instances_id","instances_name"]);
         }
         foreach ($return['assetsAssignedSUB'][$instanceid]['assets'] as $key => $type) {
-            if (!isset($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals'])) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals'] = ["status" => null,"discountPrice"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"price"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"mass"=>0.0];
+            if (!isset($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals'])) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals'] = ["status" => null,"discountPrice"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"price"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"mass"=>0.0,"powerW"=>0.0];
             foreach ($type['assets'] as $asset) {
                 if ($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] == null) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] = $asset['assetsAssignmentsStatus_name'];
                 elseif ($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] != $asset['assetsAssignmentsStatus_name']) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] = false; //They aren't all the same
                 $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['discountPrice'] = $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['discountPrice']->add($asset['discountPrice']);
                 $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price'] = $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price']->add($asset['price']);
                 $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
+                $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['powerW'] += ($asset['powerConsumptionW'] === null ? 0 : max(0, (float)$asset['powerConsumptionW']));
             }
             //Formatted totals
             $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedDiscountPrice'] = $moneyFormatter->format($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['discountPrice']);
             $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedPrice'] = $moneyFormatter->format($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price']);
             $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedMass'] = number_format($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['mass'], 2, '.', '') . "kg";
+            $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedPower'] = formatPowerW($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['powerW']);
         }
     }
 
@@ -183,6 +228,8 @@ function projectFinancials($project) {
     $return['formattedValue'] = $moneyFormatter->format($return['value']);
     $return['formattedPrices'] = ["subTotal" => $moneyFormatter->format($return['prices']['subTotal']), "discounts" => $moneyFormatter->format($return['prices']['discounts']), "total" => $moneyFormatter->format($return['prices']['total'])];
     $return['formattedMass'] = number_format($return['mass'], 2, '.', '') . "kg";
+    $return['formattedPower'] = formatPowerW($return['powerW']);
+    $return['recommendedPowerConnector'] = projectPowerConnectorRecommendation($return['powerW']);
     //format payments
     foreach ($return['payments'] as $key => $value) {
         if ($key == "subTotal") {
@@ -286,6 +333,7 @@ $PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 $PAGEDATA['invoices'] = $bCMS->s3List(20, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 $PAGEDATA['quotes'] = $bCMS->s3List(21, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 $PAGEDATA['deliveryNotes'] = $bCMS->s3List(22, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
+$PAGEDATA['powerPlans'] = $bCMS->s3List(23, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
 $DBLIB->where("assetsAssignmentsStatus_deleted", 0);

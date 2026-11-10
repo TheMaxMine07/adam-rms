@@ -58,3 +58,4 @@ Files default to private and instance aware, and only specific types vary.
 | 20 | Project Invoice | | 
 | 21 | Project Quote | |
 | 22 | Project Delivery Note | |
+| 23 | Project Power Plan | |

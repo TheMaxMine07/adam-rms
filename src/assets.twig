@@ -209,6 +209,8 @@
                                                 <span class="fa-li"><i class="fas fa-weight"></i></span> {{ (asset.tags[0]['assets_mass'] ? asset.tags[0]['assets_mass']|number_format(2) : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}
                                             </li>
                                                 {% endif %}
+                                            {% set powerW = asset.tags[0].assets_powerConsumptionW is not null ? asset.tags[0].assets_powerConsumptionW : asset.assetTypes_powerConsumptionW %}
+                                            {% if powerW is not null and powerW > 0 %}<li class="small"><span class="fa-li"><i class="fas fa-bolt"></i></span> {{ powerW|power }}</li>{% endif %}
                                             <li class="small">
                                                 <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
                                                 {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
@@ -219,6 +221,7 @@
                                                     <span class="fa-li"><i class="fas fa-weight"></i></span> {{ asset.assetTypes_mass|mass }}
                                                 </li>
                                             {% endif %}
+                                            {% if asset.assetTypes_powerConsumptionW is not null and asset.assetTypes_powerConsumptionW > 0 %}<li class="small"><span class="fa-li"><i class="fas fa-bolt"></i></span> {{ asset.assetTypes_powerConsumptionW|power }}</li>{% endif %}
                                             <li class="small">
                                                 <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ asset.assetTypes_value|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
                                                 {{ asset.assetTypes_dayRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ asset.assetTypes_weekRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/week

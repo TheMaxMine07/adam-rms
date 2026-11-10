@@ -10,6 +10,10 @@ foreach ($_POST['formData'] as $item) {
 }
 if (strlen($array['manufacturers_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 if (strlen($array['assetTypes_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No asset type name provided"]);
+if (isset($array['assetTypes_powerConsumptionW'])) {
+    if (!is_numeric($array['assetTypes_powerConsumptionW']) || (float)$array['assetTypes_powerConsumptionW'] < 0) finish(false, ["code" => "PARAM-ERROR", "message" => "Power consumption must be a non-negative number of watts"]);
+    $array['assetTypes_powerConsumptionW'] = round((float)$array['assetTypes_powerConsumptionW'], 3);
+}
 
 //Shared manufacturers and categories, or the business's own
 $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
@@ -44,7 +48,7 @@ $array['assetTypes_value'] = $moneyParser->parse(($array['assetTypes_value'] ?? 
 $array['assetTypes_dayRate'] = $moneyParser->parse(($array['assetTypes_dayRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 $array['assetTypes_weekRate'] = $moneyParser->parse(($array['assetTypes_weekRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 
-$result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetTypes_productLink','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"instances_id","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
+$result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetTypes_productLink','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_powerConsumptionW','assetTypes_inserted',"instances_id","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert asset type"]);
 else finish(true, null, ["assetTypes_id" => $result]);
 

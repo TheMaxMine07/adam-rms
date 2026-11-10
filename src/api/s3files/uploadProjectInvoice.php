@@ -18,7 +18,7 @@ if (isset($_FILES['file'])) {
             'secret' => $CONFIGCLASS->get('AWS_S3_SECRET'),
         )
     ]);
-    $isQuote = $_POST['quote'] == "true";
+    $isQuote = isset($_POST['quote']) && $_POST['quote'] == "true";
     $filenamePrefix = "invoice";
     $s3Path = "uploads/PROJECT_INVOICES";
     $fileType = 20;
@@ -36,6 +36,12 @@ if (isset($_FILES['file'])) {
             $s3Path = "uploads/PROJECT_DELIVERY_NOTES";
             $fileType = 22;
             $originalName = "delivery-note.pdf";
+            break;
+        case 'powerPlan':
+            $filenamePrefix = "power-plan";
+            $s3Path = "uploads/PROJECT_POWER_PLANS";
+            $fileType = 23;
+            $originalName = "power-plan.pdf";
             break;
         default:
             break;

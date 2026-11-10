@@ -37,6 +37,7 @@ foreach ($assets as $asset) {
 
     //Format finances
     $asset['assetTypes_mass_format'] = apiMass($asset['assetTypes_mass']);
+    $asset['assetTypes_powerConsumptionW_format'] = formatPowerW($asset['assetTypes_powerConsumptionW']);
     $asset['assetTypes_value_format'] = apiMoney($asset['assetTypes_value']);
     $asset['assetTypes_dayRate_format'] = apiMoney($asset['assetTypes_dayRate']);
     $asset['assetTypes_weekRate_format'] = apiMoney($asset['assetTypes_weekRate']);
@@ -51,13 +52,15 @@ foreach ($assets as $asset) {
     $DBLIB->where("assets_deleted", 0);
     if (!isset($_POST['all'])) $DBLIB->where("(assets.assets_linkedTo IS NULL)");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
-    $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass"]);
+    $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_powerConsumptionW"]);
     $asset['count'] = count($assetTags);
     $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
     $asset['tags'] = [];
     foreach ($assetTags as $tag) {
         $tag['assets_tag_format'] = $bCMS->aTag($tag['assets_tag']);
         $tag['assets_mass_format'] = apiMass($tag['assets_mass']);
+        $tag['assets_powerConsumptionW_effective'] = $tag['assets_powerConsumptionW'] !== null ? $tag['assets_powerConsumptionW'] : $asset['assetTypes_powerConsumptionW'];
+        $tag['assets_powerConsumptionW_format'] = formatPowerW($tag['assets_powerConsumptionW_effective']);
         $tag['assets_value_format'] = apiMoney($tag['assets_value']);
         $tag['assets_dayRate_format'] = apiMoney($tag['assets_dayRate']);
         $tag['assets_weekRate_format'] = apiMoney($tag['assets_weekRate']);

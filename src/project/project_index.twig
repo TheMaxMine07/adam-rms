@@ -736,6 +736,10 @@
                                     <label class="form-check-label">Total Mass</label>
                                 </div>
                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="totalpower" checked>
+                                    <label class="form-check-label">Total Power</label>
+                                </div>
+                                <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="totalvalue" checked>
                                     <label class="form-check-label">Total Value</label>
                                 </div>
@@ -774,6 +778,10 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="masses" checked>
                                     <label class="form-check-label">Equipment Masses</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="powers" checked>
+                                    <label class="form-check-label">Equipment Power</label>
                                 </div>
                             {% endif %}
                             {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1  %}

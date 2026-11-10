@@ -206,7 +206,7 @@ foreach ($assets as $asset) {
         if ($thisWhere) $DBLIB->where($thisWhere . ")",$thisValues);
     }
     $DBLIB->orderBy("assets.assets_tag", "ASC");
-    $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes", "assets_tag", "asset_definableFields_1", "asset_definableFields_2", "asset_definableFields_3", "asset_definableFields_4", "asset_definableFields_5", "asset_definableFields_6", "asset_definableFields_7", "asset_definableFields_8", "asset_definableFields_9", "asset_definableFields_10", "assets_dayRate", "assets_weekRate", "assets_value", "assets_mass", "assets_endDate"]);
+    $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes", "assets_tag", "asset_definableFields_1", "asset_definableFields_2", "asset_definableFields_3", "asset_definableFields_4", "asset_definableFields_5", "asset_definableFields_6", "asset_definableFields_7", "asset_definableFields_8", "asset_definableFields_9", "asset_definableFields_10", "assets_dayRate", "assets_weekRate", "assets_value", "assets_mass", "assets_powerConsumptionW", "assets_endDate"]);
     if (!$assetTags) continue;
     $asset['count'] = count($assetTags);
     $asset['countBlocked'] = 0;

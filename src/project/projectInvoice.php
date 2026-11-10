@@ -23,6 +23,10 @@ switch ($_GET['type']) {
         $typeId = 22;
         $PAGEDATA['GET']['fileType'] = 'Delivery Note';
         break;
+    case 'powerPlan':
+        $typeId = 23;
+        $PAGEDATA['GET']['fileType'] = 'Power Plan';
+        break;
     default:
         break;
 }
@@ -39,4 +43,4 @@ if ($PAGEDATA['USERDATA']['instance']['instances_logo'] and $PAGEDATA['GET']['in
     $PAGEDATA['INSTANCELOGO'] = $bCMS->s3DataUri($PAGEDATA['USERDATA']['instance']['instances_logo']);
 } else $PAGEDATA['INSTANCELOGO'] = false;
 
-echo $TWIG->render('project/pdf.twig', $PAGEDATA);
+echo $TWIG->render($_GET['type'] == 'powerPlan' ? 'project/powerPlanPdf.twig' : 'project/pdf.twig', $PAGEDATA);

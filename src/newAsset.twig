@@ -85,6 +85,11 @@
                         </div>
                     </div>
                     <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Power consumption</span></div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_powerConsumptionW" class="form-control" id="addNewType-powerConsumptionW" />
+                        <div class="input-group-append"><div class="input-group-text">W</div></div>
+                    </div>
+                    <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                               Value - {{ moneySymbol() }}
@@ -130,6 +135,12 @@
                     </div>
 
                 </div>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend"><span class="input-group-text">Individual power override</span></div>
+                    <input type="number" step="0.001" min="0" name="assets_powerConsumptionW" class="form-control" />
+                    <div class="input-group-append"><div class="input-group-text">W</div></div>
+                </div>
+                <small class="form-text text-muted mb-2">Leave blank to use the value saved on the asset type.</small>
                     <div class="input-group" id="assetNotes" style="display:none;">
                     <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
                     <textarea class="form-control" rows="2" name="assets_notes" placeholder=""></textarea>
