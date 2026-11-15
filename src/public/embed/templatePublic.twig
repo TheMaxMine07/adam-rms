@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 	<head>
 		<meta charset="utf-8">
 		<meta
@@ -49,9 +49,10 @@
 				padding: 10px;
 			}
 		</style>
+		<link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/css/modern-de.css">
 	</head>
 
-	<body>
+	<body class="adamrms-modern-ui">
 		<div class="container-fluid">
 			<div class="row">
 				<main role="main" class="col-sm-12 col-md-12 col-lg-12 col-xl-12 p-0">
@@ -73,5 +74,6 @@
 
 
 			{{ CONFIG.FOOTER_ANALYTICS|raw }}
+			<script src="{{ CONFIG.ROOTURL }}/static-assets/js/localisation-de.js"></script>
 		</body>
 	</html>
