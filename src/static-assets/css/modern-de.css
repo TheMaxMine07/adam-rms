@@ -1,0 +1,208 @@
+/* A restrained polish for the existing AdminLTE interface. */
+:root {
+    --rms-ink: #243447;
+    --rms-muted: #68778a;
+    --rms-line: #e2e8f0;
+    --rms-surface: #ffffff;
+    --rms-canvas: #f4f7fb;
+    --rms-accent: #317da0;
+    --rms-accent-dark: #266985;
+    --rms-danger: #bf3038;
+    --rms-archive: #bd6a12;
+}
+
+.adamrms-modern-ui {
+    color: var(--rms-ink);
+    background: var(--rms-canvas);
+    font-family: "Source Sans Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.adamrms-modern-ui .content-wrapper {
+    background: var(--rms-canvas);
+}
+
+.adamrms-modern-ui .main-header {
+    border-bottom: 1px solid var(--rms-line);
+    box-shadow: 0 2px 8px rgb(27 43 65 / 4%);
+}
+
+.adamrms-modern-ui .main-sidebar.sidebar-dark-pink {
+    background-color: #243447;
+}
+
+.adamrms-modern-ui .sidebar-dark-pink .nav-sidebar > .nav-item > .nav-link.active,
+.adamrms-modern-ui .sidebar-light-pink .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: var(--rms-accent);
+    color: #fff;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 14%);
+}
+
+.adamrms-modern-ui .nav-sidebar .nav-link {
+    border-radius: 6px;
+    margin: 1px 6px;
+}
+
+.adamrms-modern-ui .content-header h1 {
+    color: var(--rms-ink);
+    font-size: 1.65rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.adamrms-modern-ui .breadcrumb {
+    background: transparent;
+    color: var(--rms-muted);
+}
+
+.adamrms-modern-ui .card,
+.adamrms-modern-ui .modal-content,
+.adamrms-modern-ui .dropdown-menu,
+.adamrms-modern-ui .info-box,
+.adamrms-modern-ui .small-box {
+    border: 1px solid var(--rms-line);
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgb(31 48 70 / 5%);
+}
+
+.adamrms-modern-ui .card-header {
+    border-bottom-color: var(--rms-line);
+    border-radius: 10px 10px 0 0;
+}
+
+.adamrms-modern-ui .btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+.adamrms-modern-ui .btn:focus,
+.adamrms-modern-ui .btn:hover {
+    box-shadow: 0 2px 7px rgb(31 48 70 / 12%);
+}
+
+.adamrms-modern-ui .form-control,
+.adamrms-modern-ui .custom-select,
+.adamrms-modern-ui .select2-container--bootstrap4 .select2-selection {
+    border-color: #d6dee8;
+    border-radius: 6px;
+}
+
+.adamrms-modern-ui .form-control:focus,
+.adamrms-modern-ui .custom-select:focus {
+    border-color: #78abc2;
+    box-shadow: 0 0 0 .18rem rgb(49 125 160 / 15%);
+}
+
+.adamrms-modern-ui table thead th {
+    background-color: #f7f9fc;
+    border-bottom: 1px solid var(--rms-line);
+    color: #536477;
+    font-weight: 600;
+}
+
+.adamrms-modern-ui .main-footer {
+    border-top-color: var(--rms-line);
+    color: var(--rms-muted);
+}
+
+/* Keep destructive and archival actions easy to distinguish at a glance. */
+.adamrms-modern-ui .ui-action-delete:not(.btn-danger),
+.adamrms-modern-ui .ui-action-delete:not(.btn-danger) i,
+.adamrms-modern-ui .ui-action-delete:not(.btn-danger) .fas,
+.adamrms-modern-ui .ui-action-delete:not(.btn-danger) .far {
+    color: var(--rms-danger) !important;
+}
+
+.adamrms-modern-ui .ui-action-delete.btn-danger {
+    background-color: #fde8e9 !important;
+    border-color: #e3a4a8 !important;
+    color: #a4232b !important;
+}
+
+.adamrms-modern-ui .ui-action-delete.btn-danger i,
+.adamrms-modern-ui .ui-action-delete.btn-danger .fas,
+.adamrms-modern-ui .ui-action-delete.btn-danger .far {
+    color: #a4232b !important;
+}
+
+.adamrms-modern-ui .ui-action-archive:not(.btn-warning),
+.adamrms-modern-ui .ui-action-archive:not(.btn-warning) i,
+.adamrms-modern-ui .ui-action-archive:not(.btn-warning) .fas,
+.adamrms-modern-ui .ui-action-archive:not(.btn-warning) .far {
+    color: var(--rms-archive) !important;
+}
+
+.adamrms-modern-ui .ui-action-archive.btn-danger {
+    background-color: #fff4df !important;
+    border-color: #e8bd78 !important;
+    color: #9a5400 !important;
+}
+
+.adamrms-modern-ui .ui-action-archive.btn-danger i,
+.adamrms-modern-ui .ui-action-archive.btn-danger .fas,
+.adamrms-modern-ui .ui-action-archive.btn-danger .far {
+    color: #9a5400 !important;
+}
+
+.adamrms-modern-ui .ui-action-archive.btn-warning {
+    color: #674000 !important;
+}
+
+.adamrms-modern-ui.dark-mode {
+    --rms-ink: #e5ebf2;
+    --rms-muted: #aeb9c7;
+    --rms-line: #46515e;
+    --rms-surface: #343a40;
+    --rms-canvas: #252a30;
+}
+
+.adamrms-modern-ui.dark-mode,
+.adamrms-modern-ui.dark-mode .content-wrapper {
+    background-color: var(--rms-canvas);
+    color: var(--rms-ink);
+}
+
+.adamrms-modern-ui.dark-mode .card,
+.adamrms-modern-ui.dark-mode .modal-content,
+.adamrms-modern-ui.dark-mode .dropdown-menu,
+.adamrms-modern-ui.dark-mode .info-box,
+.adamrms-modern-ui.dark-mode .small-box {
+    background-color: var(--rms-surface);
+    border-color: var(--rms-line);
+}
+
+.adamrms-modern-ui.dark-mode table thead th {
+    background-color: #303740;
+    border-color: var(--rms-line);
+    color: var(--rms-ink);
+}
+
+.adamrms-login-ui {
+    min-height: 100%;
+    background: radial-gradient(circle at 15% 15%, #e8f4f8 0, transparent 35%),
+        linear-gradient(135deg, #f2f6fa, #dfeaf0) !important;
+    color: var(--rms-ink);
+}
+
+.adamrms-login-ui #masterBox {
+    padding: 2rem;
+    border: 1px solid rgb(207 219 230 / 85%);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgb(31 48 70 / 12%);
+}
+
+.adamrms-login-ui .form-control {
+    min-height: 46px;
+    border-color: #d6dee8;
+    border-radius: 7px;
+}
+
+.adamrms-login-ui .btn {
+    border-radius: 7px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .adamrms-modern-ui .btn {
+        transition: none;
+    }
+}

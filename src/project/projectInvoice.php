@@ -12,20 +12,20 @@ $PAGEDATA['GET']['quote'] = $isQuote;
 $PAGEDATA['GET']['deliveryNote'] = $isDeliveryNote;
 
 $typeId = 20;
-$PAGEDATA['GET']['fileType'] = 'Invoice';
+$PAGEDATA['GET']['fileType'] = 'Rechnung';
 
 switch ($_GET['type']) {
     case 'quote':
         $typeId = 21;
-        $PAGEDATA['GET']['fileType'] = 'Quotation';
+        $PAGEDATA['GET']['fileType'] = 'Angebot';
         break;
     case 'deliveryNote':
         $typeId = 22;
-        $PAGEDATA['GET']['fileType'] = 'Delivery Note';
+        $PAGEDATA['GET']['fileType'] = 'Lieferschein';
         break;
     case 'powerPlan':
         $typeId = 23;
-        $PAGEDATA['GET']['fileType'] = 'Power Plan';
+        $PAGEDATA['GET']['fileType'] = 'Stromplan';
         break;
     default:
         break;

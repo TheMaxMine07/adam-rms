@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang='en'>
+<html lang='de'>
 <head>
     <meta charset='utf-8'>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js" integrity="sha512-7BzHjLXs8xehClrkJEtJtAwXxcbLast87k+XekuItHxrMr/v6POWkoKS2/8CU6DHdIjY+A4NwvsBQ8PxoRH7xQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -71,27 +71,27 @@
                             {
                                 table: {
                                     body: [
-                                        ['Our Reference:',"{{project.projects_id|escape("js")}}"],
+                                        ['Projektnummer:',"{{project.projects_id|escape("js")}}"],
                                         {% if project.projects_dates_deliver_start %}
-                                            ['Deliver:',"{{ project.projects_dates_deliver_start|date("j M Y h:ia")|escape("js")}}"],
+                                            ['Auslieferung:',"{{ project.projects_dates_deliver_start|date("j. M Y H:i")|escape("js")}}"],
                                         {% endif %}
                                         {% if project.projects_dates_use_start %}
-                                            ['Start:',"{{ project.projects_dates_use_start|date("j M Y h:ia")|escape("js")}}"],
+                                            ['Einsatzbeginn:',"{{ project.projects_dates_use_start|date("j. M Y H:i")|escape("js")}}"],
                                         {% endif %}
                                         {% if project.projects_dates_use_end %}
-                                            ['Finish:',"{{ project.projects_dates_use_end|date("j M Y h:ia")|escape("js") }}"],
+                                            ['Einsatzende:',"{{ project.projects_dates_use_end|date("j. M Y H:i")|escape("js") }}"],
                                         {% endif %}
                                         {% if project.projects_dates_deliver_end %}
-                                            ['Collect:',"{{ project.projects_dates_deliver_end|date("j M Y h:ia")|escape("js") }}"],
+                                            ['Rücknahme:',"{{ project.projects_dates_deliver_end|date("j. M Y H:i")|escape("js") }}"],
                                         {% endif %}
                                         {% if GET['totalmass'] and project.projectsTypes_config_assets == 1 %}
-                                            ['Mass Estimate:',"{{FINANCIALS.mass|mass|escape("js") }}"],
+                                            ['Gesamtgewicht:',"{{FINANCIALS.mass|mass|escape("js") }}"],
                                         {% endif %}
                                         {% if GET['totalpower'] and project.projectsTypes_config_assets == 1 %}
-                                            ['Power Estimate:',"{{ FINANCIALS.formattedPower|escape("js") }}"],
+                                            ['Strombedarf:',"{{ FINANCIALS.formattedPower|escape("js") }}"],
                                         {% endif %}
                                         {% if GET['totalvalue'] and project.projectsTypes_config_assets == 1 %}
-                                            ['Value Estimate:',"{{FINANCIALS.value|money|escape("js") }}"],
+                                            ['Gesamtwert:',"{{FINANCIALS.value|money|escape("js") }}"],
                                         {% endif %}
                                     ],
                                 },
@@ -101,7 +101,7 @@
                             {% if GET['venue'] and project.projectsTypes_config_venue == 1 %}
                             {
                                 stack: [
-                                    { text: 'Venue', style: {bold: true}},
+                                    { text: 'Veranstaltungsort', style: {bold: true}},
                                     "{{ project.locations_name|escape("js") }}",
                                     "{{ project.locations_address|escape("js") }}"
                                 ],
@@ -121,41 +121,41 @@
                         widths: [ "35%", "15%", "35%", "15%"],
                         body: [
                             [
-                                { text: "Equipment SubTotal" },
+                                { text: "Zwischensumme Geräte" },
                                 { text: "{{ FINANCIALS.prices.subTotal|money|escape("js") }}", style: { alignment: 'right' } },
-                                { text: "Sales" },
+                                { text: "Verkäufe" },
                                 { text: "{{ FINANCIALS.payments.sales.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             [
-                                { text: "{% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}" },
-                                { text: "{% if FINANCIALS.prices.discounts|moneyPositive %}-{{ FINANCIALS.prices.discounts|money|escape("js") }}{% else %}None{% endif %}", style: { alignment: 'right' } },
-                                { text: "Staffing" },
+                                { text: "{% if FINANCIALS.prices.discounts|moneyPositive %}Rabatte{% else %}Anpassungen{% endif %}" },
+                                { text: "{% if FINANCIALS.prices.discounts|moneyPositive %}-{{ FINANCIALS.prices.discounts|money|escape("js") }}{% else %}Keine{% endif %}", style: { alignment: 'right' } },
+                                { text: "Personal" },
                                 { text: "{{ FINANCIALS.payments.staff.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             [
-                                { text: "Equipment Total", style: { bold: true } },
+                                { text: "Gesamt Geräte", style: { bold: true } },
                                 { text: "{{ FINANCIALS.prices.total|money|escape("js") }}", style: { alignment: 'right' } },
-                                { text: "Sub Hires" },
+                                { text: "Fremdmieten" },
                                 { text: "{{ FINANCIALS.payments.subHire.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             {% if GET['type'] == "invoice" %}
                             [
                                 { text: "" },
                                 { text: "" },
-                                { text: "SubTotal", style: { bold: true } },
+                                { text: "Zwischensumme", style: { bold: true } },
                                 { text: "{{ FINANCIALS.payments.subTotal|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             [
                                 { text: "" },
                                 { text: "" },
-                                { text: "Payments Received to Date" },
+                                { text: "Bisher erhaltene Zahlungen" },
                                 { text: "-{{ FINANCIALS.payments.received.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             {% endif %}
                             [
                                 { text: "" },
                                 { text: "" },
-                                { text: "{% if GET['type'] == 'quote' %}Grand Total{% else %}Grand Total Outstanding{% endif %}", style: { bold: true } },
+                                { text: "{% if GET['type'] == 'quote' %}Gesamtsumme{% else %}Offener Gesamtbetrag{% endif %}", style: { bold: true } },
                                 { text: "{{ FINANCIALS.payments.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                         ],
@@ -172,7 +172,7 @@
                     "{{ project.projects_deliveryNotes|escape("js") }}",
                 {% endif %}
                 {% if GET['assets'] and project.projectsTypes_config_assets == 1 %}
-                    { text: "Equipment", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
+                { text: "Geräte", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
                     
                     {% set columnCount = 2 %}
                     {% if GET['checkboxes'] %}{% set columnCount = columnCount + 1 %}{% endif %}
@@ -203,14 +203,14 @@
                                 body: [
                                     [
                                         {% if GET['checkboxes'] %}' ',{% endif %}
-                                        'Item',
+                                        'Gerät',
                                         {% if GET['comments'] %}' ',{% endif %}
                                         '{# Definable Fields #} ',
-                                        {% if GET['masses'] %}'Mass',{% endif %}
-                                        {% if GET['powers'] %}'Power',{% endif %}
+                                        {% if GET['masses'] %}'Gewicht',{% endif %}
+                                        {% if GET['powers'] %}'Strombedarf',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
-                                            {% if GET['prices'] %}'Price {{ moneySymbol() }}',{% endif %}
-                                            {% if GET['discounts'] %}'Disc {{ moneySymbol() }}',{% endif %}
+                                            {% if GET['prices'] %}'Preis {{ moneySymbol() }}',{% endif %}
+                                            {% if GET['discounts'] %}'Rabatt {{ moneySymbol() }}',{% endif %}
                                         {% endif %}
                                     ],
                                 {% set currentCategory = "" %}
@@ -237,7 +237,7 @@
                         },
                     {% endif %}
                     {% if FINANCIALS.assetsAssignedSUB|length > 0 %}{% for instance in FINANCIALS.assetsAssignedSUB %}
-                        { text: "{{ instance['instance']['instances_name']|escape("js") }} Equipment", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
+                { text: "Geräte von {{ instance['instance']['instances_name']|escape("js") }}", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
                         { 
                             table: {
                                 headerRows: 1,
@@ -256,14 +256,14 @@
                                 body: [
                                     [
                                         {% if GET['checkboxes'] %}' ',{% endif %}
-                                        'Item',
+                                        'Gerät',
                                         {% if GET['comments'] %}' ',{% endif %}
                                         '{# Definable Fields #} ',
-                                        {% if GET['masses'] %}'Mass',{% endif %}
-                                        {% if GET['powers'] %}'Power',{% endif %}
+                                        {% if GET['masses'] %}'Gewicht',{% endif %}
+                                        {% if GET['powers'] %}'Strombedarf',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
-                                            {% if GET['prices'] %}'Price {{ moneySymbol() }}',{% endif %}
-                                            {% if GET['discounts'] %}'Disc {{ moneySymbol() }}',{% endif %}
+                                            {% if GET['prices'] %}'Preis {{ moneySymbol() }}',{% endif %}
+                                            {% if GET['discounts'] %}'Rabatt {{ moneySymbol() }}',{% endif %}
                                         {% endif %}
                                     ],
                                 {% set currentCategory = "" %}
@@ -291,10 +291,10 @@
                     {% endfor %}{% endif %}
                     {% if GET['flagsBlocks'] %}{ text: "[F] indicates asset flagged, [B] indicates asset blocked" },{% endif %}
                     { text: "[L] indicates asset linked to another" },
-                    { text: "{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Total Item{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }}", style: { fontSize: 16, bold: true, alignment: 'right' } },
+                    { text: "{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Geräte insgesamt", style: { fontSize: 16, bold: true, alignment: 'right' } },
                 {% endif %}
                 {% if FINANCIALS.payments.subHire.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['subHires']  %}
-                    { text: "Additional Hire Items", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
+                    { text: "Zusätzlich angemietete Geräte", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
                     { 
                         table: {
                             widths: ['auto', '*'{% if GET['prices'] %},'auto','auto'{% endif %}],
@@ -352,7 +352,7 @@
                     {% endif %}
                 {% endif %}
                 {% if FINANCIALS.payments.sales.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['sales'] %}
-                    { text: "Sales", style: { fontSize: 20, bold: true } },
+                    { text: "Verkäufe", style: { fontSize: 20, bold: true } },
                     { 
                         table: {
                             widths: ['auto', '*'{% if GET['prices'] %},'auto','auto'{% endif %}],
@@ -410,7 +410,7 @@
                     {% endif %}
                 {% endif %}
                 {% if project.projectsTypes_config_finance == 1 and FINANCIALS.payments.staff.ledger|length > 0 and GET['staff'] %}
-                    { text: "Staff", style: { fontSize: 20, bold: true } },
+                    { text: "Personal", style: { fontSize: 20, bold: true } },
                     { 
                         table: {
                             widths: ['auto', '*'{% if GET['prices'] %},'auto','auto'{% endif %}],
@@ -498,11 +498,11 @@
                     columns: [
                         {text: "{{ "now"|date("j M Y h:i:sa")|escape("js") }}", width: "40%"},
                         {text: currentPage.toString() + '/' + pageCount, alignment: 'center', width: "20%"},
-                        {text: "Generated by AdamRMS", alignment: 'right', width: "40%" }]
+                        {text: "Erstellt mit AdamRMS", alignment: 'right', width: "40%" }]
                     , margin: [40, 20, 40, 20]
                 }; 
             },
-            {% if GET['draft'] %}watermark: { text: 'DRAFT', opacity: 0.2, bold: true, italics: false },{% endif %}
+            {% if GET['draft'] %}watermark: { text: 'ENTWURF', opacity: 0.2, bold: true, italics: false },{% endif %}
             pageSize: 'A4',
             pageOrientation: 'portrait',
             pageMargins: [ 40, 40, 40, 40 ],
@@ -517,7 +517,7 @@
         try {
             var pdf = pdfMake.createPdf(docDefinition);
             {% if GET['draft'] or CONFIG.FILES_ENABLED != "Enabled" or USERDATA.instance.instances_storageEnabled != 1 %}
-            pdf.download("{{ project['projects_name']|escape("js") }} - Draft {{ GET['fileType'] }}.pdf", function() {
+            pdf.download("{{ project['projects_name']|escape("js") }} - Entwurf {{ GET['fileType'] }}.pdf", function() {
                 // Firefox takes a bit longer to do file actions, so delay closing this tab a little
                 setTimeout(() => {window.close()}, 100)
             });
@@ -544,11 +544,11 @@
                             setTimeout(() => {window.close()}, 100)
                         });
                     } else {
-                        alert("Error loading PDF");
+                        alert("Das PDF konnte nicht geladen werden.");
                     }
                 };
                 oReq.onerror = function(error) {
-                    alert("Error creating invoice");
+                    alert("Das Dokument konnte nicht erstellt werden.");
                 }
                 oReq.send(formData);
             });

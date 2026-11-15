@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml">
+<html lang="de" data-language="de" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml">
 	<head>
 		<title>{{ CONFIG.PROJECT_NAME }}</title>
 		<meta
@@ -10,12 +10,13 @@
 		<meta property="og:type" content="website"/>
 		<meta property="og:url" content="/login/"/>
 		<meta property="og:site_name" content="{{ CONFIG.PROJECT_NAME }}"/>
-		<meta property="og:description" content="{{ CONFIG.PROJECT_NAME }} admin login"/>
+		<meta property="og:description" content="Anmeldung zur Verwaltung von {{ CONFIG.PROJECT_NAME }}"/>
 
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous"/>
+		<link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/css/modern-de.css">
 		<style>
 			html,
 			body,
@@ -124,7 +125,7 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body class="adamrms-login-ui">
 		<div class="container">
 			<div class="row align-items-center" id="masterRow">
 				<div class="col-lg-6 offset-lg-3
@@ -134,15 +135,15 @@
 					<div id="masterBox">
 						<a href="{{CONFIG.ROOTURL}}/login/?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
 						<div class="alert alert-danger" style="border: 0px; text-align: left; display: none;" id="defaultAccountEnabledWarning">
-							<h4>The default super administrator account for {{ CONFIG.PROJECT_NAME }} is enabled</h4>
-							<p>Login to this account and change the password. Default username is <strong>username</strong> and password is <strong>password!</strong></p>
+							<h4>Das Standardkonto für die Systemadministration von {{ CONFIG.PROJECT_NAME }} ist aktiviert.</h4>
+							<p>Melde dich mit diesem Konto an und ändere das Passwort. Benutzername: <strong>username</strong>, Passwort: <strong>password!</strong></p>
 						</div>
 						{% if CONFIG.DEV %}
 							<div class="alert alert-warning" style="border: 0px; text-align: left;">
-								<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
-								<p>Default username is <strong>username</strong> and password is <strong>password!</strong></p>
-								<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
-								<a type="button" href="/" onclick="javascript:event.target.port=8083" target="_blank" class="btn btn-info btn-sm">Email Inbox</a>
+								<h4>{{ CONFIG.PROJECT_NAME }} läuft im Entwicklungsmodus und sollte nur zu Testzwecken verwendet werden.</h4>
+								<p>Standardbenutzername: <strong>username</strong>, Passwort: <strong>password!</strong></p>
+								<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Datenbank-Editor</a>
+								<a type="button" href="/" onclick="javascript:event.target.port=8083" target="_blank" class="btn btn-info btn-sm">E-Mail-Postfach</a>
 							</div>
 						{% endif %}
 						{% block content %}{% endblock %}
@@ -155,9 +156,9 @@
 						{{ VERSION }}
 					</div>
 					<div class="col-8" style="text-align: right;">
-						<a style="margin-right: 15px;" href="https://adam-rms.com">About</a>
+						<a style="margin-right: 15px;" href="https://adam-rms.com">Über AdamRMS</a>
 {% if CONFIG.LINKS_TERMSOFSERVICEURL %}
-	<a href="{{ CONFIG.LINKS_TERMSOFSERVICEURL }}" target="_blank">Terms &amp; Privacy</a>
+	<a href="{{ CONFIG.LINKS_TERMSOFSERVICEURL }}" target="_blank">Nutzungsbedingungen und Datenschutz</a>
 {% endif %}
 
 					</div>
@@ -186,5 +187,6 @@
 			(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","{{ CONFIG.ANALYTICS_CLARITY_PROJECT_ID|escape("js") }}");
 		</script>
 		{% endif %}
+		<script src="{{ CONFIG.ROOTURL }}/static-assets/js/localisation-de.js"></script>
 	</body>
 </html>
